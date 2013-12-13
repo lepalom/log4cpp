@@ -42,6 +42,9 @@ namespace log4cpp {
         void register_shutdown_handler(shutdown_fun_ptr handler);
         virtual void deleteAllCategories();
 
+        typedef Category* (*creator_function_t)(const std::string& name, log4cpp::Category* parent, log4cpp::Priority::Value priority); 
+        static void set_category_factory(creator_function_t creator_function);  
+
         protected:
         virtual Category* _getExistingInstance(const std::string& name);
         virtual Category& _getInstance(const std::string& name);
@@ -53,6 +56,8 @@ namespace log4cpp {
      
         static HierarchyMaintainer* _defaultMaintainer;
         handlers_t handlers_;
+	static Category* make_category(const std::string& name, log4cpp::Category* parent, log4cpp::Priority::Value priority);
+        static creator_function_t _creator_function;
     };        
 }
 
