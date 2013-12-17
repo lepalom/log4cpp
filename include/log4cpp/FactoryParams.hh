@@ -54,9 +54,9 @@ namespace log4cpp
    class LOG4CPP_EXPORT FactoryParams
    {
          typedef std::map<std::string, std::string> storage_t;
-		 
+
 	 		    storage_t storage_;
-      
+
       public:
          typedef storage_t::const_iterator const_iterator;
 
@@ -83,7 +83,7 @@ namespace log4cpp
             template<typename T>
             optional_params_validator optional(const char* param, T& value) const;
 #endif
-            
+
             template<typename T>
             const required_params_validator& operator()(const char* param, T& value) const
             {
@@ -97,7 +97,7 @@ namespace log4cpp
             }
 
       };
-      
+
       class optional_params_validator : public base_validator_data
       {
          public:
@@ -129,45 +129,22 @@ namespace log4cpp
             template<typename T>
             optional_params_validator optional(const char* param, T& value) const { optional_params_validator v(tag_, params_); v(param, value); return v; }
       };
-   
-   class LOG4CPP_EXPORT FactoryParams
-   {
-         typedef std::map<std::string, std::string> storage_t;
-
-                                 storage_t storage_;
-
-      public:
-         typedef storage_t::const_iterator const_iterator;
-
-         const std::string& operator[](const std::string& v) const;
-         std::string& operator[](const std::string& v) { return storage_[v]; }
-         details::parameter_validator get_for(const char* tag) const { return details::parameter_validator(tag, this); }
-         const_iterator find(const std::string& t) const;
-         const_iterator begin() const { return storage_.begin(); }
-         const_iterator end() const { return storage_.end(); }
-
-      private:
-         /*typedef std::map<std::string, std::string> storage_t;
-
-         storage_t storage_; */
-   };
-
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
       template<typename T>
-      optional_params_validator 
-      required_params_validator::optional(const char* param, T& value) const 
-      { 
-         optional_params_validator v(tag_, params_); 
-         v(param, value); 
-         return v; 
+      optional_params_validator
+      required_params_validator::optional(const char* param, T& value) const
+      {
+         optional_params_validator v(tag_, params_);
+         v(param, value);
+         return v;
       }
 #endif
    }
 
-   inline details::parameter_validator FactoryParams::get_for(const char* tag) const 
+   inline details::parameter_validator FactoryParams::get_for(const char* tag) const
    {
-      return details::parameter_validator(tag, this); 
+      return details::parameter_validator(tag, this);
    }
 }
 
