@@ -17,10 +17,13 @@
 #endif
 
 #include <cstdio>
+#include <cassert>
 #include <log4cpp/HierarchyMaintainer.hh>
 #include <log4cpp/FileAppender.hh>
 
 namespace log4cpp {
+
+HierarchyMaintainer::creator_function_t	HierarchyMaintainer::_creator_function = 0;
 
     HierarchyMaintainer& HierarchyMaintainer::getDefaultMaintainer() {
         static HierarchyMaintainer defaultMaintainer;
@@ -64,7 +67,7 @@ namespace log4cpp {
         
         if (NULL == result) {            
             if (name == "") {
-                result = new Category(name, NULL, Priority::INFO);
+                result = make_category(name, NULL, Priority::INFO);
             } else {
                 std::string parentName;
                 size_t dotIndex = name.find_last_of('.');
@@ -74,7 +77,7 @@ namespace log4cpp {
                     parentName = name.substr(0, dotIndex);
                 }
                 Category& parent = _getInstance(parentName);
-                result = new Category(name, &parent, Priority::NOTSET);
+                result = make_category(name, &parent, Priority::NOTSET);
             }	  
             _categoryMap[name] = result; 
         }
@@ -124,7 +127,27 @@ namespace log4cpp {
             for(CategoryMap::const_iterator i = _categoryMap.begin(); i != _categoryMap.end(); i++) {
                 delete ((*i).second);
             }
+			_categoryMap.erase(_categoryMap.begin(), _categoryMap.end());
         }
     }
 
+    void HierarchyMaintainer::set_category_factory(creator_function_t creator_function)
+	{
+		assert(0 != creator_function);
+		_creator_function = creator_function;
+	}
+
+    Category* HierarchyMaintainer::make_category(const std::string& name,
+												 Category* parent,
+												 Priority::Value priority)
+	{
+		if (_creator_function)
+		{
+			return (*_creator_function)(name, parent, priority);
+		}
+		else
+		{
+			return new Category(name, parent, priority);
+		}
+	}
 }
