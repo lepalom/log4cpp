@@ -13,7 +13,7 @@
 #    include <unistd.h>
 #endif
 #include <cstdlib>
-#include <stdio.h>
+#include <cstdio>
 #include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
