@@ -4,7 +4,11 @@
 
 namespace log4cpp {
     namespace threading {
-
+        char* getThreadId(char* buffer) {
+                    ::sprintf(buffer, "%ld", (long int)pthread_self());
+                    return buffer;
+        }
+                                        
         std::string getThreadId() {
             char buffer[16];
             ::sprintf(buffer, "%lu", pthread_self());	// thread id unsigned
